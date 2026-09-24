@@ -202,6 +202,8 @@ Download and extract the dataset before proceeding with the project setup.
 After extraction, place the dataset in the project directory according to the expected dataset structure.
 
 Expected Dataset Structure
+
+```text
 tomato/
 └── tomato/
     ├── train/
@@ -212,6 +214,7 @@ tomato/
     │   └── ...
     │
     └── ...
+```
 
 
 > [!NOTE]
@@ -281,6 +284,7 @@ Your terminal should now be inside the project directory.
 
 The application should contain the following major files and directories:
 
+```text
 tomato/
 │
 ├── app.py
@@ -312,7 +316,7 @@ tomato/
 │   └── about.html
 │
 └── tests/
-
+```
 
 The dataset should be downloaded separately and placed in the appropriate tomato/ dataset directory when training or retraining the model.
 
