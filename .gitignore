@@ -1,0 +1,18 @@
+﻿# Dataset
+tomato/tomato/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# Logs
+*.log
+
+# Local databases
+*.db
+
+# Development / temporary files
+TODO.md

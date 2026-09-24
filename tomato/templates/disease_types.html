@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomato Disease Types - Disease Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .disease-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .disease-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .disease-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+        
+        .disease-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .disease-card .disease-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .disease-card .disease-description {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .disease-card .disease-symptoms {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .disease-card .disease-symptoms h4 {
+            margin: 0 0 5px 0;
+            color: #495057;
+        }
+        
+        .disease-card .disease-treatment {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .disease-card .disease-treatment h4 {
+            margin: 0 0 5px 0;
+            color: #2e7d32;
+        }
+        
+        .healthy-card {
+            border: 2px solid #4caf50;
+        }
+        
+        .disease-card-wrapper {
+            border-left: 4px solid #f44336;
+        }
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header-section h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+        }
+        
+        .header-section p {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 10px auto;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            color: white;
+        }
+        
+        .stat-item .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .stat-item .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>🍅 Tomato Disease Detection</h2>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-info">Dashboard</a>
+                <a href="{{ url_for('about') }}" class="btn btn-info">About</a>
+            </div>
+            <div class="nav-user">
+                <span>Welcome, {{ current_user.username }}!</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm">Logout</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="header-section">
+            <h1>🍅 Tomato Disease Types</h1>
+            <p>Our AI-powered detection system can identify 10 different tomato leaf conditions including 9 diseases and 1 healthy state.</p>
+            
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-number">10</div>
+                    <div class="stat-label">Total Classes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">9</div>
+                    <div class="stat-label">Disease Types</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">Healthy State</div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 style="margin: 30px 0 20px;">Dataset Class Names:</h2>
+        <div class="disease-grid">
+            <!-- Bacterial Spot -->
+            <div class="disease-card disease-card-wrapper">
+                <div class="disease-icon">🦠</div>
+                <h3>Tomato___Bacterial_spot</h3>
+                <div class="disease-description">
+                    Bacterial spot is a bacterial disease caused by <em>Xanthomonas vesicatoria</em>. It affects tomatoes, peppers, and other solanaceous plants, causing significant crop losses.
+                </div>
+                <div class="disease-symptoms">
+                    <h4>Symptoms:</h4>
+                    <ul>
+                        <li>Dark, water-soaked lesions on leaves</li>
+                        <li>Small, raised spots with yellow halos</li>
+                        <li>Fruit with raised, scab-like spots</li>
+                        <li>Leaf drop and plant weakening</li>
+                    </ul>
+                </div>
+                <div class="disease-treatment">
+                    <h4>Treatment:</h4>
+                    <ul>
+                        <li>Use copper-based bactericides</li>
+                        <li>Remove and destroy infected plants</li>
+                        <li>Use disease-free seeds and transplants</li>
+                        <li>Improve air circulation</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Early Blight -->
+            <div class="disease-card disease-card-wrapper">
+                <div class="disease-icon">🍂</div>
+                <h3>Tomato___Early_blight</h3>
+                <div class="disease-description">
+                    Early blight is a common fungal disease caused by <em>Alternaria solani</em>. It is one of the most widespread tomato diseases and can cause significant yield losses.
+                </div>
+                <div class="disease-symptoms">
+                    <h4>Symptoms:</h4>
+                    <ul>
+                        <li>Dark brown spots with concentric rings</li>
+                        <li>Lower leaves affected first</li>
+                        <li>Yellowing and drying of leaves</li>
+                        <li>Fruit rot at the stem end</li>
+                    </ul>
+                </div>
+                <div class="disease-treatment">
+                    <h4>Treatment:</h4>
+                    <ul>
+                        <li>Apply fungicides (chlorothalonil, mancozeb)</li>
+                        <li>Remove infected plant debris</li>
+                        <li>Use resistant varieties</li>
+                        <li>Mulch around plants</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Late Blight -->
+            <div class="disease-card disease-card-wrapper">
+                <div class="disease-icon">🌧️</div>
+                <h3>Tomato___Late_blight</h3>
+                <div class="disease-description">
+                    Late blight is a devastating fungal-like disease caused by <em>Phytophthora infestans</em>. Famous for causing the Irish Potato Famine, it can destroy entire crops in favorable conditions.
+                </div>
+                <div class="disease-symptoms">
+                    <h4>Symptoms:</h4>
+                    <ul>
+                        <li>Water-soaked, grayish-green spots</li>
+                        <li>White fuzzy mold on leaf undersides</li>
+                        <li>Rapidly spreading lesions</li>
+                        <li>Plant collapse in humid conditions</li>
+                    </ul>
+                </div>
+                <div class="disease-treatment">
+                    <h4>Treatment:</h4>
+                    <ul>
+                        <li>Apply preventive fungicides</li>
+                        <li>Remove infected plants immediately</li>
+                        <li>Ensure good air circulation</li>
+                        <li>Avoid overhead watering</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Leaf Mold -->
+            <div class="disease-card disease-card-wrapper">
+                <div class="disease-icon">🍄</div>
+                <h3>Tomato___Leaf_Mold</h3>
+                <div class="disease-description">
+                    Leaf mold is a fungal disease caused by <em>Passalora fulva</em>. It thrives in warm, humid conditions and primarily affects greenhouse tomatoes.
+                </div>
+                <div class="disease-symptoms">
+                    <h4>Symptoms:</h4>
+                    <ul>
+                        <li>Yellow spots on upper leaf surfaces</li>
+                        <li>Olive-green to brown fuzzy mold below</li>
+                        <li>Leaf curling and drying</li>
+                        <li>Reduced fruit quality</li>
+                    </ul>
+                </div>
+                <div class="disease-treatment">
+                    <h4>Treatment:</h4>
+                    <ul>
+                        <li>Improve ventilation</li>
+                        <li>Reduce humidity</li>
+                        <li>Apply sulfur-based fungicides</li>
+                        <li>Use resistant varieties</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Septoria Leaf Spot -->
+            <div class="disease-card disease-card-wrapper">
+                <div class="disease-icon">🔴</div>
+                <h3>Tomato___Septoria_leaf_spot</h3>
+                <div class="disease-description">
+                    Septoria leaf spot is caused by the fungus <em>Septoria lycopersici</em>. It is one of the most common and damaging tomato diseases, especially in wet conditions.
+                </div>
+                <div class="disease-symptoms">
+                    <h4>Symptoms:</h4>
+                    <ul>
+                        <li>Small dark spots with light centers</li>
+                        <li>Multiple spots on leaves</li>
+                        <li>Leaf drop from the bottom up</li>
+                        <li>Stem and fruit lesions</li>
+                    </ul>
+                </div>
+                <div class="disease-treatment">
+                    <h4>Treatment:</h4>
+                    <ul>
+                        <li>Apply fungicides weekly</li>
+                        <li>Remove lower infected leaves</li>
+                        <li>Avoid overhead irrigation</li>
+                        <li>Rotate crops</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Spider Mites -->
+            <div class="disease-card disease-card-wrapper">
+                <div class="disease-icon">🕷️</div>
+                <h3>Tomato___Spider_mites Two-spotted_spider_mite</h3>
+                <div class="disease-description">
+                    Two-spotted spider mites (<em>Tetranychus urticae</em>) are arachnids that feed on plant cells. They are a common pest in hot, dry conditions and can cause significant damage.
+                </div>
+                <div class="disease-symptoms">
+                    <h4>Symptoms:</h4>
+                    <ul>
+                        <li>Stippled, yellow leaves</li>
+                        <li>Fine webbing on leaves</li>
+                        <li>Bronzed or dried leaves</li>
+                        <li>Reduced plant vigor</li>
+                    </ul>
+                </div>
+                <div class="disease-treatment">
+                    <h4>Treatment:</h4>
+                    <ul>
+                        <li>Use insecticidal soap or oils</li>
+                        <li>Introduce predatory mites</li>
+                        <li>Keep plants well-watered</li>
+                        <li>Increase humidity</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Target Spot -->
+            <div class="disease-card disease-card-wrapper">
+                <div class="disease-icon">🎯</div>
+                <h3>Tomato___Target_Spot</h3>
+                <div class="disease-description">
+                    Target spot is caused by the fungus <em>Corynespora cassiicola</em>. It affects many crops and can cause leaf spots, stem lesions, and fruit rot in tomatoes.
+                </div>
+                <div class="disease-symptoms">
+                    <h4>Symptoms:</h4>
+                    <ul>
+                        <li>Brown lesions with concentric rings</li>
+                        <li>Spots that may merge</li>
+                        <li>Leaf yellowing and drop</li>
+                        <li>Sunken spots on fruit</li>
+                    </ul>
+                </div>
+                <div class="disease-treatment">
+                    <h4>Treatment:</h4>
+                    <ul>
+                        <li>Apply appropriate fungicides</li>
+                        <li>Remove infected debris</li>
+                        <li>Improve plant spacing</li>
+                        <li>Use disease-free seeds</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Tomato Mosaic Virus -->
+            <div class="disease-card disease-card-wrapper">
+                <div class="disease-icon">🦟</div>
+                <h3>Tomato___Tomato_mosaic_virus</h3>
+                <div class="disease-description">
+                    Tomato mosaic virus is a highly contagious viral disease that affects many solanaceous plants. It can survive in dried plant debris and tobacco products for years.
+                </div>
+                <div class="disease-symptoms">
+                    <h4>Symptoms:</h4>
+                    <ul>
+                        <li>Mottled light and dark green leaves</li>
+                        <li>Leaf curling and distortion</li>
+                        <li>Stunted plant growth</li>
+                        <li>Yellowing of fruit</li>
+                    </ul>
+                </div>
+                <div class="disease-treatment">
+                    <h4>Treatment:</h4>
+                    <ul>
+                        <li>No cure - remove infected plants</li>
+                        <li>Use resistant varieties</li>
+                        <li>Disinfect tools and hands</li>
+                        <li>Control insect vectors</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Tomato Yellow Leaf Curl Virus -->
+            <div class="disease-card disease-card-wrapper">
+                <div class="disease-icon">🟡</div>
+                <h3>Tomato___Tomato_Yellow_Leaf_Curl_Virus</h3>
+                <div class="disease-description">
+                    TYLCV is a begomovirus transmitted by whiteflies. It is one of the most damaging diseases of tomato worldwide, causing severe economic losses.
+                </div>
+                <div class="disease-symptoms">
+                    <h4>Symptoms:</h4>
+                    <ul>
+                        <li>Upward leaf curling</li>
+                        <li>Yellow leaf margins</li>
+                        <li>Stunted plant growth</li>
+                        <li>Reduced fruit set</li>
+                    </ul>
+                </div>
+                <div class="disease-treatment">
+                    <h4>Treatment:</h4>
+                    <ul>
+                        <li>Use resistant varieties</li>
+                        <li>Control whitefly populations</li>
+                        <li>Remove infected plants</li>
+                        <li>Use reflective mulches</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Healthy -->
+            <div class="disease-card healthy-card">
+                <div class="disease-icon">✅</div>
+                <h3>Tomato___healthy</h3>
+                <div class="disease-description">
+                    A healthy tomato leaf shows no signs of disease or pest damage. The leaf should be green, vibrant, and free of spots, discoloration, or abnormalities.
+                </div>
+                <div class="disease-symptoms">
+                    <h4>Characteristics:</h4>
+                    <ul>
+                        <li>Uniform green color</li>
+                        <li>No spots or lesions</li>
+                        <li>Strong, upright stems</li>
+                        <li>Normal leaf development</li>
+                    </ul>
+                </div>
+                <div class="disease-treatment">
+                    <h4>Prevention Tips:</h4>
+                    <ul>
+                        <li>Maintain proper watering schedule</li>
+                        <li>Provide adequate nutrition</li>
+                        <li>Monitor plants regularly</li>
+                        <li>Practice good garden hygiene</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; padding: 20px;">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Upload Image for Detection</a>
+        </div>
+    </div>
+</body>
+
+</html>

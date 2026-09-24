@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Maps & Histogram Analysis</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-section h1 {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header-section p {
+            opacity: 0.95;
+            margin: 0;
+        }
+
+        .upload-section {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .file-input-label i {
+            font-size: 40px;
+            color: #667eea;
+            margin-right: 15px;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            font-weight: 600;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .upload-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .visualization-section {
+            padding: 30px;
+        }
+
+        .visualization-section h3 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .visualization-section h3 i {
+            color: #667eea;
+        }
+
+        .visualization-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .visualization-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            margin: 15px 0;
+        }
+
+        .statistics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .info-box {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            margin: 20px 0;
+        }
+
+        .info-box h5 {
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .info-box ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .info-box li {
+            margin: 8px 0;
+        }
+
+        .no-visualizations {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-visualizations i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .no-visualizations p {
+            font-size: 16px;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #ffc107;
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .tabs-container {
+            margin: 20px 0;
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #667eea;
+        }
+
+        .nav-tabs .nav-link {
+            color: #667eea;
+            border: none;
+            font-weight: 600;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+
+        .tab-content {
+            padding: 20px;
+            background: white;
+            border-radius: 0 0 10px 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header-section {
+                padding: 20px;
+            }
+
+            .upload-section {
+                padding: 20px;
+            }
+
+            .visualization-section {
+                padding: 15px;
+            }
+
+            .statistics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="features-container">
+        <a href="{{ url_for('dashboard') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1><i class="fas fa-brain"></i> Feature Maps & Histogram Analysis</h1>
+            <p>Visualize CNN feature maps and analyze image histograms in detail</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Upload Card -->
+        <div class="card">
+            <div class="upload-section">
+                <h3 class="mb-4"><i class="fas fa-upload"></i> Upload Image for Analysis</h3>
+                <form method="POST" enctype="multipart/form-data" class="upload-form">
+                    <div class="file-input-wrapper">
+                        <input type="file" id="fileInput" name="file" accept="image/*" required>
+                        <label for="fileInput" class="file-input-label">
+                            <i class="fas fa-image"></i>
+                            <span>Click to select or drag image here (PNG, JPG, JPEG, GIF)</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="upload-btn" id="submitBtn">
+                        <i class="fas fa-chart-bar"></i> Generate Visualizations
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Visualizations Results -->
+        {% if feature_maps %}
+        <div class="card">
+            <div class="visualization-section">
+                <!-- Tabs for different visualizations -->
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs" id="visTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="feature-tab" data-bs-toggle="tab"
+                                data-bs-target="#feature-pane" type="button" role="tab">
+                                <i class="fas fa-network-wired"></i> Feature Maps
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="histogram-tab" data-bs-toggle="tab"
+                                data-bs-target="#histogram-pane" type="button" role="tab">
+                                <i class="fas fa-chart-bar"></i> Grayscale Histogram
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="rgb-tab" data-bs-toggle="tab" data-bs-target="#rgb-pane"
+                                type="button" role="tab">
+                                <i class="fas fa-palette"></i> RGB Histogram
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="comparison-tab" data-bs-toggle="tab"
+                                data-bs-target="#comparison-pane" type="button" role="tab">
+                                <i class="fas fa-columns"></i> Image Comparison
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="visTabContent">
+                        <!-- Feature Maps Tab -->
+                        <div class="tab-pane fade show active" id="feature-pane" role="tabpanel">
+                            <h3><i class="fas fa-network-wired"></i> CNN Feature Maps</h3>
+                            <div class="info-box">
+                                <h5>What are Feature Maps?</h5>
+                                <p>Feature maps are learned representations from the CNN layers. Each filter (neuron) in
+                                    a layer learns to detect different patterns in the image such as edges, textures,
+                                    and shapes. The visualization shows the 12 most important feature maps extracted
+                                    from the second-to-last layer of the model.</p>
+                            </div>
+                            <div class="visualization-container">
+                                {% if feature_maps %}
+                                <img src="{{ feature_maps }}" alt="Feature Maps Visualization">
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Grayscale Histogram Tab -->
+                        <div class="tab-pane fade" id="histogram-pane" role="tabpanel">
+                            <h3><i class="fas fa-chart-bar"></i> Grayscale Histogram</h3>
+                            <div class="info-box">
+                                <h5>Understanding the Histogram</h5>
+                                <ul>
+                                    <li><strong>Left chart:</strong> Shows the frequency distribution of pixel
+                                        intensities (0-255)</li>
+                                    <li><strong>Right chart:</strong> Cumulative distribution showing what percentage of
+                                        pixels have intensity below each value</li>
+                                    <li><strong>High spread:</strong> Indicates good contrast in the image</li>
+                                    <li><strong>Narrow peaks:</strong> Indicates limited color (brightness) variation
+                                    </li>
+                                </ul>
+                            </div>
+                            {% if histogram_stats %}
+                            <h5 style="margin-top: 20px; margin-bottom: 15px;">Histogram Statistics</h5>
+                            <div class="statistics-grid">
+                                <div class="stat-box">
+                                    <div class="stat-label">Mean</div>
+                                    <p class="stat-value">{{ histogram_stats.mean }}</p>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Median</div>
+                                    <p class="stat-value">{{ histogram_stats.median }}</p>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Std Dev</div>
+                                    <p class="stat-value">{{ histogram_stats.std }}</p>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Min</div>
+                                    <p class="stat-value">{{ histogram_stats.min }}</p>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Max</div>
+                                    <p class="stat-value">{{ histogram_stats.max }}</p>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Mode</div>
+                                    <p class="stat-value">{{ histogram_stats.mode }}</p>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Q1 (25%)</div>
+                                    <p class="stat-value">{{ histogram_stats.q1 }}</p>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Q3 (75%)</div>
+                                    <p class="stat-value">{{ histogram_stats.q3 }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="visualization-container">
+                                {% if histogram %}
+                                <img src="{{ histogram }}" alt="Grayscale Histogram">
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- RGB Histogram Tab -->
+                        <div class="tab-pane fade" id="rgb-pane" role="tabpanel">
+                            <h3><i class="fas fa-palette"></i> RGB Channel Histogram</h3>
+                            <div class="info-box">
+                                <h5>RGB Histogram Analysis</h5>
+                                <p>This histogram shows the distribution of pixel intensities in each color channel
+                                    (Red, Green, Blue) separately. Overlapping distributions indicate balanced color
+                                    channels, while separated distributions suggest color dominance in the image. This
+                                    is useful for understanding the color composition and detecting color abnormalities
+                                    in leaf images.</p>
+                            </div>
+                            <div class="visualization-container">
+                                {% if histogram_rgb %}
+                                <img src="{{ histogram_rgb }}" alt="RGB Histogram">
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Image Comparison Tab -->
+                        <div class="tab-pane fade" id="comparison-pane" role="tabpanel">
+                            <h3><i class="fas fa-columns"></i> Image Comparison</h3>
+                            <div class="info-box">
+                                <h5>Processing Enhancement</h5>
+                                <p><strong>Original:</strong> The raw uploaded image as-is<br>
+                                    <strong>Processed (CLAHE):</strong> Enhanced using Contrast Limited Adaptive
+                                    Histogram Equalization, which improves local contrast while preventing
+                                    over-enhancement. This preprocessing helps the model detect disease patterns more
+                                    effectively.
+                                </p>
+                            </div>
+                            <div class="visualization-container">
+                                {% if comparison %}
+                                <img src="{{ comparison }}" alt="Image Comparison">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Information Box -->
+                <div class="info-box"
+                    style="margin-top: 30px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); border-left-color: #764ba2;">
+                    <h5><i class="fas fa-lightbulb"></i> Key Insights</h5>
+                    <ul>
+                        <li>Feature maps help understand what the neural network has learned about disease patterns</li>
+                        <li>Activated regions in feature maps indicate where the model detects important patterns</li>
+                        <li>Histogram analysis reveals image quality and contrast characteristics important for disease
+                            detection</li>
+                        <li>Processing with CLAHE enhances local details that can indicate disease symptoms</li>
+                        <li>RGB histogram helps identify color-based disease indicators in leaf images</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- No Visualizations Message -->
+        <div class="card">
+            <div class="no-visualizations">
+                <i class="fas fa-images"></i>
+                <p>Upload an image to generate feature maps and histogram visualizations</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Drag and drop functionality
+        const fileInput = document.getElementById('fileInput');
+        const fileLabel = document.querySelector('.file-input-label');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, () => {
+                fileLabel.style.borderColor = '#764ba2';
+                fileLabel.style.background = '#f0e6ff';
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, () => {
+                fileLabel.style.borderColor = '#667eea';
+                fileLabel.style.background = '#f8f9ff';
+            });
+        });
+
+        fileLabel.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+        });
+
+        // Show filename when selected
+        fileInput.addEventListener('change', (e) => {
+            const filename = e.target.files[0]?.name || '';
+            if (filename) {
+                const span = fileLabel.querySelector('span');
+                span.textContent = 'Selected: ' + filename;
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Algorithm Comparison</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>🍅 Algorithm Comparison</h2>
+            </div>
+            <div class="nav-user">
+                <span>Welcome, {{ current_user.username }}!</span>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-sm">Back</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>About — Model Comparison</h1>
+            <p>Compare the algorithms (Method 1, Method 2, Method 3) across common metrics.</p>
+        </header>
+
+        <!-- Algorithm descriptions -->
+        <div class="results-section">
+            <div class="result-card">
+                <h2>Algorithms</h2>
+                <div class="algorithms-grid">
+                    <div class="algorithm-card">
+                        <h4>Method 1 — Feature-based (GLCM + RF)</h4>
+                        <p>Hand-crafted texture and statistical features are extracted from CLAHE-enhanced
+                            grayscale images. A Random Forest classifier is trained on these compact
+                            descriptors for interpretable, stable predictions.</p>
+                    </div>
+
+                    <div class="algorithm-card">
+                        <h4>Method 2 — Combined (GLCM + MobileNetV2)</h4>
+                        <p>Combines handcrafted GLCM/statistical features with deep features from a
+                            MobileNetV2 backbone. Concatenated feature vectors are classified with an
+                            ensemble (RandomForest / XGBoost / LightGBM) to improve discrimination.</p>
+                    </div>
+
+                    <div class="algorithm-card">
+                        <h4>Method 3 — Full Pipeline & Comparison</h4>
+                        <p>Full training and evaluation pipeline: extract both GLCM and deep features,
+                            compare multiple classifiers, and select the best model by F1/robustness.
+                            Provides performance analysis and confusion-matrix based selection.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <main>
+            <div class="results-section">
+                <div class="result-card">
+                    <h3>Compare Classifiers by Model</h3>
+                    <div class="model-select">
+                        <label for="modelSelect">Select Model:</label>
+                        <select id="modelSelect">
+                            <option value="glcm">GLCM Model</option>
+                            <option value="mobilenet">MobileNetV2 + Deep Features</option>
+                            <option value="fusion">Fusion Model</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>Accuracy Comparison</h2>
+                    <canvas id="accuracyChart" height="120"></canvas>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>F1 Score Comparison</h2>
+                    <canvas id="f1Chart" height="120"></canvas>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>Precision Comparison</h2>
+                    <canvas id="precisionChart" height="120"></canvas>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>Recall Comparison</h2>
+                    <canvas id="recallChart" height="120"></canvas>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>Inference Time (ms)</h2>
+                    <canvas id="inferenceChart" height="120"></canvas>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>Training Time (s)</h2>
+                    <canvas id="trainingChart" height="120"></canvas>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>AUC (ROC) Comparison</h2>
+                    <canvas id="aucChart" height="120"></canvas>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>Notes</h2>
+                    <p>These charts use default/example metrics. Replace the `/about/data` endpoint
+                        or modify the server-side logic to return real evaluation numbers from your
+                        training pipeline (e.g., stored metrics JSON, saved model metadata, or a
+                        centralized results CSV) for accurate comparisons.</p>
+                </div>
+            </div>
+
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Tomato Disease Detection System.</p>
+        </footer>
+    </div>
+
+    <script>
+        async function loadData(model) {
+            const url = '/about/data' + (model ? `?model=${encodeURIComponent(model)}` : '');
+            const resp = await fetch(url);
+            if (!resp.ok) return null;
+            return resp.json();
+        }
+
+        function makeBar(ctx, labels, data, label, color) {
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: color,
+                        borderColor: color,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        // Keep chart instances to allow destroying before redraw
+        const charts = [];
+
+        function clearCharts() {
+            while (charts.length) {
+                const c = charts.pop();
+                try { c.destroy(); } catch (e) {}
+            }
+        }
+
+        async function renderForModel(model) {
+            const d = await loadData(model);
+            if (!d) return;
+            const labels = d.methods;
+            clearCharts();
+            charts.push(makeBar(document.getElementById('accuracyChart'), labels, d.accuracy.map(x=>x*100), 'Accuracy (%)', ['#4CAF50','#2196F3','#FF9800']));
+            charts.push(makeBar(document.getElementById('f1Chart'), labels, d.f1.map(x=>x*100), 'F1 Score (%)', ['#8BC34A','#03A9F4','#FFC107']));
+            charts.push(makeBar(document.getElementById('precisionChart'), labels, d.precision.map(x=>x*100), 'Precision (%)', ['#66BB6A','#29B6F6','#FFA726']));
+            charts.push(makeBar(document.getElementById('recallChart'), labels, d.recall.map(x=>x*100), 'Recall (%)', ['#43A047','#0288D1','#FB8C00']));
+            charts.push(makeBar(document.getElementById('inferenceChart'), labels, d.inference_ms, 'Inference (ms)', ['#9C27B0','#3F51B5','#009688']));
+            charts.push(makeBar(document.getElementById('trainingChart'), labels, d.train_time, 'Training Time (s)', ['#607D8B','#795548','#FF5722']));
+            charts.push(makeBar(document.getElementById('aucChart'), labels, d.auc.map(x=>x*100), 'AUC (%)', ['#8E24AA','#3949AB','#00ACC1']));
+        }
+
+        (async () => {
+            const sel = document.getElementById('modelSelect');
+            // initial render
+            await renderForModel(sel.value);
+            sel.addEventListener('change', async () => { await renderForModel(sel.value); });
+        })();
+    </script>
+</body>
+
+</html>

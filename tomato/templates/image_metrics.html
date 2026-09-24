@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Metrics Analysis</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .metrics-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-section h1 {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .upload-section {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .file-input-label i {
+            font-size: 40px;
+            color: #667eea;
+            margin-right: 15px;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            font-weight: 600;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .upload-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .metric-unit {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .images-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .image-box {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 10px;
+        }
+
+        .image-box h5 {
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .histogram-spread-section {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .histogram-spread-section h4 {
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .spread-metric-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .spread-metric-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .spread-metric-item label {
+            display: block;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .spread-metric-item .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .no-metrics {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-metrics i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .no-metrics p {
+            font-size: 16px;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #ffc107;
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .headers-section {
+                padding: 20px;
+            }
+
+            .upload-section {
+                padding: 20px;
+            }
+
+            .metric-value {
+                font-size: 24px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .images-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="metrics-container">
+        <a href="{{ url_for('dashboard') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1><i class="fas fa-chart-line"></i> Image Metrics Analysis</h1>
+            <p>Analyze image quality and characteristics using advanced metrics</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Upload Card -->
+        <div class="card">
+            <div class="upload-section">
+                <h3 class="mb-4"><i class="fas fa-upload"></i> Upload Image for Analysis</h3>
+                <form method="POST" enctype="multipart/form-data" class="upload-form">
+                    <div class="file-input-wrapper">
+                        <input type="file" id="fileInput" name="file" accept="image/*" required>
+                        <label for="fileInput" class="file-input-label">
+                            <i class="fas fa-image"></i>
+                            <span>Click to select or drag image here (PNG, JPG, JPEG, GIF)</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="upload-btn" id="submitBtn">
+                        <i class="fas fa-bar-chart"></i> Analyze Image
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Metrics Results -->
+        {% if metrics %}
+        <!-- Main Metrics Cards -->
+        <div class="metrics-grid">
+            <!-- PSNR Metric -->
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-signal"></i>
+                </div>
+                <div class="metric-label">PSNR Value</div>
+                <div class="metric-value">{{ metrics.psnr }}</div>
+                <div class="metric-unit">dB (Peak Signal-to-Noise Ratio)</div>
+            </div>
+
+            <!-- Entropy Metric -->
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-random"></i>
+                </div>
+                <div class="metric-label">Entropy</div>
+                <div class="metric-value">{{ metrics.entropy }}</div>
+                <div class="metric-unit">bits (Information Content)</div>
+            </div>
+
+            <!-- Contrast Index Metric -->
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="metric-label">Contrast Index</div>
+                <div class="metric-value">{{ metrics.contrast_index }}</div>
+                <div class="metric-unit">RMS Contrast</div>
+            </div>
+        </div>
+
+        <!-- Images Section -->
+        <div class="card">
+            <div style="padding: 25px;">
+                <h4 class="mb-4"><i class="fas fa-images"></i> Image Comparison</h4>
+                <div class="images-section">
+                    {% if original_image %}
+                    <div class="image-box">
+                        <h5>Original Image</h5>
+                        <img src="{{ original_image }}" alt="Original Image" class="img-fluid">
+                    </div>
+                    {% endif %}
+                    {% if grayscale_image %}
+                    <div class="image-box">
+                        <h5>Grayscale Image</h5>
+                        {% if metrics.psnr_original_grayscale %}
+                        <p style="color: #667eea; font-weight: 600; font-size: 13px; margin-bottom: 10px;">
+                            <i class="fas fa-signal"></i> PSNR vs Original: {{ metrics.psnr_original_grayscale }} dB
+                        </p>
+                        {% endif %}
+                        <img src="{{ grayscale_image }}" alt="Grayscale Image" class="img-fluid">
+                    </div>
+                    {% endif %}
+                    {% if processed_image %}
+                    <div class="image-box">
+                        <h5>Processed Image (CLAHE Enhanced)</h5>
+                        {% if metrics.psnr_grayscale_clahe %}
+                        <p style="color: #667eea; font-weight: 600; font-size: 13px; margin-bottom: 10px;">
+                            <i class="fas fa-signal"></i> PSNR vs Grayscale: {{ metrics.psnr_grayscale_clahe }} dB
+                        </p>
+                        {% endif %}
+                        <img src="{{ processed_image }}" alt="Processed Image" class="img-fluid">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Histogram Spread Analysis -->
+        {% if metrics.histogram_spread %}
+        <div class="card">
+            <div class="histogram-spread-section">
+                <h4><i class="fas fa-chart-bar"></i> Histogram Spread Analysis</h4>
+
+                <div class="spread-metric-row">
+                    <div class="spread-metric-item">
+                        <label>Mean Histogram Value</label>
+                        <div class="value">{{ metrics.histogram_spread.mean_hist_value }}</div>
+                    </div>
+                    <div class="spread-metric-item">
+                        <label>Standard Deviation</label>
+                        <div class="value">{{ metrics.histogram_spread.std_hist_value }}</div>
+                    </div>
+                    <div class="spread-metric-item">
+                        <label>Spread Percentage</label>
+                        <div class="value">{{ metrics.histogram_spread.spread_percentage }}%</div>
+                    </div>
+                </div>
+
+                <div class="spread-metric-row">
+                    <div class="spread-metric-item">
+                        <label>Mean Pixel Intensity</label>
+                        <div class="value">{{ metrics.histogram_spread.mean_pixel_intensity }}</div>
+                    </div>
+                    <div class="spread-metric-item">
+                        <label>Std Pixel Intensity</label>
+                        <div class="value">{{ metrics.histogram_spread.std_pixel_intensity }}</div>
+                    </div>
+                    <div class="spread-metric-item">
+                        <label>Skewness</label>
+                        <div class="value">{{ metrics.histogram_spread.skewness }}</div>
+                    </div>
+                </div>
+
+                <div class="spread-metric-row">
+                    <div class="spread-metric-item">
+                        <label>Kurtosis (Peakedness)</label>
+                        <div class="value">{{ metrics.histogram_spread.kurtosis }}</div>
+                    </div>
+                </div>
+
+                <div
+                    style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #764ba2;">
+                    <h6 style="color: #333; margin-bottom: 10px;">📊 Interpretation Guide</h6>
+                    <ul style="margin: 0; padding-left: 20px; color: #666; font-size: 13px;">
+                        <li><strong>Spread Percentage:</strong> Higher % means pixels are distributed across more
+                            intensity values</li>
+                        <li><strong>Skewness:</strong> Positive = right-skewed histogram, Negative = left-skewed</li>
+                        <li><strong>Kurtosis:</strong> Higher values indicate sharper peaks in the histogram</li>
+                        <li><strong>Mean Pixel Intensity:</strong> Average brightness of the image (0-255)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Metrics Explanation -->
+        <div class="card" style="margin-top: 30px; margin-bottom: 40px;">
+            <div style="padding: 25px;">
+                <h4 class="mb-4"><i class="fas fa-info-circle"></i> Metrics Explanation</h4>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div
+                            style="padding: 15px; background: #f8f9ff; border-radius: 8px; border-left: 4px solid #667eea;">
+                            <h6 style="color: #333; margin-bottom: 8px;">📈 PSNR (Peak Signal-to-Noise Ratio)</h6>
+                            <p style="color: #666; font-size: 13px; margin: 0;">Measures the quality of the processed
+                                image compared to the original. Higher values (>30dB) indicate better quality. PSNR=∞
+                                means identical images.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div
+                            style="padding: 15px; background: #f8f9ff; border-radius: 8px; border-left: 4px solid #667eea;">
+                            <h6 style="color: #333; margin-bottom: 8px;">🎲 Entropy</h6>
+                            <p style="color: #666; font-size: 13px; margin: 0;">Measures the amount of
+                                information/randomness in the image. Higher entropy (max ~8 for 8-bit images) means more
+                                varied pixel intensities. Uniform images have low entropy.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div
+                            style="padding: 15px; background: #f8f9ff; border-radius: 8px; border-left: 4px solid #667eea;">
+                            <h6 style="color: #333; margin-bottom: 8px;">🎨 Contrast Index</h6>
+                            <p style="color: #666; font-size: 13px; margin: 0;">Measures the variation in pixel
+                                intensities (RMS contrast). Higher values indicate more contrast between bright and dark
+                                areas. Range: 0-1 (normalized).</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div
+                            style="padding: 15px; background: #f8f9ff; border-radius: 8px; border-left: 4px solid #667eea;">
+                            <h6 style="color: #333; margin-bottom: 8px;">📊 Histogram Spread</h6>
+                            <p style="color: #666; font-size: 13px; margin: 0;">Analyzes how pixel values are
+                                distributed across the intensity range. Shows the shape, spread, and statistical
+                                properties of the histogram distribution.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- No Metrics Message -->
+        <div class="card">
+            <div class="no-metrics">
+                <i class="fas fa-chart-area"></i>
+                <p>Upload an image to calculate metrics and analyze its characteristics</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Drag and drop functionality
+        const fileInput = document.getElementById('fileInput');
+        const fileLabel = document.querySelector('.file-input-label');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, () => {
+                fileLabel.style.borderColor = '#764ba2';
+                fileLabel.style.background = '#f0e6ff';
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, () => {
+                fileLabel.style.borderColor = '#667eea';
+                fileLabel.style.background = '#f8f9ff';
+            });
+        });
+
+        fileLabel.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+        });
+
+        // Show filename when selected
+        fileInput.addEventListener('change', (e) => {
+            const filename = e.target.files[0]?.name || '';
+            if (filename) {
+                const span = fileLabel.querySelector('span');
+                span.textContent = 'Selected: ' + filename;
+            }
+        });
+    </script>
+</body>
+
+</html>

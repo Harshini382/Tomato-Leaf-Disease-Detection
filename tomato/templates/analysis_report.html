@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Analysis Report - Tomato Disease Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>🍅 Tomato Disease Detection</h2>
+            </div>
+            <div class="nav-user">
+                <span>Welcome, {{ current_user.username }}!</span>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-sm">Back to Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline btn-sm">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>📊 Algorithm Analysis Report</h1>
+            <p>Detailed explanation of the CNN-based tomato disease detection system</p>
+        </header>
+
+        <main>
+            <!-- Executive Summary -->
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>🎯 Executive Summary</h2>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-label">Model Architecture</span>
+                            <span class="summary-value">{{ method_report.executive_model_architecture if method_report and method_report.executive_model_architecture is defined else 'MobileNetV2 + Random Forest' }}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Feature Extractor</span>
+                            <span class="summary-value">{{ method_report.executive_feature_extractor if method_report and method_report.executive_feature_extractor is defined else 'Transfer Learning (ImageNet)' }}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Classifier</span>
+                            <span class="summary-value">{{ method_report.executive_classifier if method_report and method_report.executive_classifier is defined else 'Random Forest (100 trees)' }}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Target Accuracy</span>
+                            <span class="summary-value">{{ method_report.executive_target_accuracy if method_report and method_report.executive_target_accuracy is defined else '≥93%' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Algorithm Overview -->
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>🧠 Algorithm Overview</h2>
+                    <div class="algorithm-flow">
+                        <div class="flow-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Image Preprocessing</h4>
+                                <ul>
+                                    <li>Convert RGB to BGR color space</li>
+                                    <li>Apply grayscale conversion</li>
+                                    <li>CLAHE contrast enhancement</li>
+                                    <li>Resize to 224×224 pixels</li>
+                                    <li>Normalize pixel values to [0, 1]</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Feature Extraction</h4>
+                                <ul>
+                                    <li>MobileNetV2 backbone (frozen)</li>
+                                    <li>Global Average Pooling</li>
+                                    <li>1280-dimensional feature vector</li>
+                                    <li>Transfer learning from ImageNet</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Classification</h4>
+                                <ul>
+                                    <li>Random Forest Classifier</li>
+                                    <li>100 decision trees</li>
+                                    <li>Max depth: 20</li>
+                                    <li>Probability output for each class</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4>Prediction</h4>
+                                <ul>
+                                    <li>Softmax-like probability distribution</li>
+                                    <li>Top-1 class selection</li>
+                                    <li>Confidence score calculation</li>
+                                    <li>Detailed probability breakdown</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model Architecture (dynamic per method) -->
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>🔬 Model Architecture</h2>
+
+                    {% if method_selected == 'method1' or (method_report and method_report.executive_model_architecture is defined and 'Method 1' in method_report.executive_model_architecture) %}
+                    <div class="architecture-section">
+                        <h3>Method 1 — Feature-based Architecture</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Specification</th>
+                                    <th>Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Feature Extraction</td>
+                                    <td>{{ method_report.executive_feature_extractor if method_report and method_report.executive_feature_extractor is defined else 'GLCM + Statistical features (CLAHE, entropy, histograms)' }}</td>
+                                    <td>Hand-crafted texture and intensity descriptors</td>
+                                </tr>
+                                <tr>
+                                    <td>Input</td>
+                                    <td>CLAHE-enhanced grayscale (expanded to 3-channel for compatibility)</td>
+                                    <td>Enhance local contrast and emphasize texture</td>
+                                </tr>
+                                <tr>
+                                    <td>Feature Vector</td>
+                                    <td>GLCM features + statistical summaries</td>
+                                    <td>Compact descriptor for Random Forest classifier</td>
+                                </tr>
+                                <tr>
+                                    <td>Classifier</td>
+                                    <td>{{ method_report.executive_classifier if method_report and method_report.executive_classifier is defined else 'Random Forest (feature-based)' }}</td>
+                                    <td>Ensemble decision trees on extracted features</td>
+                                </tr>
+                                <tr>
+                                    <td>Target / Behavior</td>
+                                    <td>{{ method_report.executive_target_accuracy if method_report and method_report.executive_target_accuracy is defined else 'High F1, stable across folds' }}</td>
+                                    <td>Robust, interpretable predictions</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="architecture-section">
+                        <h3>MobileNetV2 Feature Extractor</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Specification</th>
+                                    <th>Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Base Model</td>
+                                    <td>MobileNetV2</td>
+                                    <td>Lightweight CNN for efficient feature extraction</td>
+                                </tr>
+                                <tr>
+                                    <td>Input Shape</td>
+                                    <td>(224, 224, 3)</td>
+                                    <td>Standard ImageNet preprocessing</td>
+                                </tr>
+                                <tr>
+                                    <td>Weights</td>
+                                    <td>ImageNet (frozen)</td>
+                                    <td>Transfer learning for general visual features</td>
+                                </tr>
+                                <tr>
+                                    <td>Top Layers</td>
+                                    <td>Removed</td>
+                                    <td>Custom feature extraction only</td>
+                                </tr>
+                                <tr>
+                                    <td>Output</td>
+                                    <td>Global Average Pooling</td>
+                                    <td>1280-dimensional feature vector</td>
+                                </tr>
+                                <tr>
+                                    <td>Parameters</td>
+                                    <td>~2.8M (frozen)</td>
+                                    <td>No training required for feature extraction</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="architecture-section">
+                        <h3>Key MobileNetV2 Innovations</h3>
+                        <div class="innovations-grid">
+                            <div class="innovation-card">
+                                <h4>Inverted Residuals</h4>
+                                <p>Skip connections between bottleneck layers for better gradient flow</p>
+                            </div>
+                            <div class="innovation-card">
+                                <h4>Linear Bottlenecks</h4>
+                                <p>Linear activation before pooling to preserve important features</p>
+                            </div>
+                            <div class="innovation-card">
+                                <h4>Width Multiplier</h4>
+                                <p>Trade-off between accuracy and computational cost (α=1.0)</p>
+                            </div>
+                            <div class="innovation-card">
+                                <h4>ReLU6 Activation</h4>
+                                <p>Bounds activations for numerical stability in mobile devices</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Random Forest Classifier -->
+            {% if method_selected == 'method1' %}
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>🌲 Random Forest Classifier</h2>
+
+                    <div class="rf-specs">
+                        <div class="rf-spec">
+                            <h4>Hyperparameters</h4>
+                            <ul>
+                                {% if method_report and method_report.rf_hyperparameters is defined %}
+                                    {% for k,v in method_report.rf_hyperparameters %}
+                                        <li><strong>{{ k }}:</strong> {{ v }}</li>
+                                    {% endfor %}
+                                {% else %}
+                                <li><strong>n_estimators:</strong> 100 trees</li>
+                                <li><strong>max_depth:</strong> 20 levels</li>
+                                <li><strong>criterion:</strong> Gini Impurity</li>
+                                <li><strong>min_samples_split:</strong> 2</li>
+                                <li><strong>min_samples_leaf:</strong> 1</li>
+                                <li><strong>max_features:</strong> sqrt(n_features)</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div class="rf-spec">
+                            <h4>Why Random Forest?</h4>
+                            <ul>
+                                <li>Robust to overfitting with ensemble learning</li>
+                                <li>Handles high-dimensional feature spaces well</li>
+                                <li>Provides probability estimates for each class</li>
+                                <li>Insensitive to feature scaling</li>
+                                <li>Fast inference time for real-time applications</li>
+                                <li>Interpretable through feature importance</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="algorithm-box">
+                        <h4>Gini Impurity Formula</h4>
+                        <p class="formula">Gini = 1 - Σ(pᵢ)²</p>
+                        <p>Where pᵢ is the probability of class i in the node. Lower Gini impurity indicates purer
+                            splits.</p>
+                    </div>
+                </div>
+            </div>
+            {% elif method_selected == 'method2' %}
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>🧩 Combined Classifier (Method 2)</h2>
+
+                    <div class="rf-specs">
+                        <div class="rf-spec">
+                            <h4>Classifier</h4>
+                            <p>{{ method_report.executive_classifier if method_report and method_report.executive_classifier is defined else 'Ensemble classifier (combined GLCM + deep features)' }}</p>
+                            {% if method_report and method_report.get('classifier_details') %}
+                                <pre>{{ method_report.classifier_details }}</pre>
+                            {% endif %}
+                        </div>
+                        <div class="rf-spec">
+                            <h4>Why a Combined Approach?</h4>
+                            <ul>
+                                <li>Leverages both handcrafted texture features and deep features</li>
+                                <li>Improves discrimination for subtle disease patterns</li>
+                                <li>Allows model selection based on performance (RF / XGBoost / LightGBM)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>🌲 Random Forest Classifier</h2>
+
+                    <div class="rf-specs">
+                        <div class="rf-spec">
+                            <h4>Hyperparameters</h4>
+                            <ul>
+                                <li><strong>n_estimators:</strong> 100 trees</li>
+                                <li><strong>max_depth:</strong> 20 levels</li>
+                                <li><strong>criterion:</strong> Gini Impurity</li>
+                                <li><strong>min_samples_split:</strong> 2</li>
+                                <li><strong>min_samples_leaf:</strong> 1</li>
+                                <li><strong>max_features:</strong> sqrt(n_features)</li>
+                            </ul>
+                        </div>
+                        <div class="rf-spec">
+                            <h4>Why Random Forest?</h4>
+                            <ul>
+                                <li>Robust to overfitting with ensemble learning</li>
+                                <li>Handles high-dimensional feature spaces well</li>
+                                <li>Provides probability estimates for each class</li>
+                                <li>Insensitive to feature scaling</li>
+                                <li>Fast inference time for real-time applications</li>
+                                <li>Interpretable through feature importance</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="algorithm-box">
+                        <h4>Gini Impurity Formula</h4>
+                        <p class="formula">Gini = 1 - Σ(pᵢ)²</p>
+                        <p>Where pᵢ is the probability of class i in the node. Lower Gini impurity indicates purer
+                            splits.</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Image Preprocessing Pipeline -->
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>🖼️ Image Preprocessing Pipeline</h2>
+
+                    <div class="preprocessing-steps">
+                        {% if method_report and method_report.preprocessing_steps is defined %}
+                            {% for step in method_report.preprocessing_steps %}
+                            <div class="prep-step">
+                                <h4>{{ step.title }}</h4>
+                                <ul>
+                                    {% for b in step.bullets %}
+                                    <li>{{ b }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <div class="prep-step">
+                            <h4>Step 1: Color Space Conversion</h4>
+                            <p><strong>RGB → BGR</strong></p>
+                            <p>OpenCV reads images in BGR format. PIL loads in RGB, so conversion is necessary.</p>
+                            <pre>image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)</pre>
+                        </div>
+
+                        <div class="prep-step">
+                            <h4>Step 2: Grayscale Conversion</h4>
+                            <p><strong>BGR → Grayscale</strong></p>
+                            <p>Reduces computational complexity while preserving texture information.</p>
+                            <pre>gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)</pre>
+                        </div>
+
+                        <div class="prep-step">
+                            <h4>Step 3: CLAHE Enhancement</h4>
+                            <p><strong>Contrast Limited Adaptive Histogram Equalization</strong></p>
+                            <p>Improves local contrast and handles illumination variations.</p>
+                            <pre>clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+clahe_image = clahe.apply(gray)</pre>
+                            <div class="params">
+                                <span><strong>clipLimit:</strong> 2.0 (contrast limiting factor)</span>
+                                <span><strong>tileGridSize:</strong> (8, 8) (grid of 8×8 tiles)</span>
+                            </div>
+                        </div>
+
+                        <div class="prep-step">
+                            <h4>Step 4: Resizing</h4>
+                            <p><strong>Original → 224×224</strong></p>
+                            <p>Standard input size for MobileNetV2 architecture.</p>
+                            <pre>resized = cv2.resize(clahe_image, (224, 224))</pre>
+                        </div>
+
+                        <div class="prep-step">
+                            <h4>Step 5: Normalization</h4>
+                            <p><strong>Pixel Values → [0, 1]</strong></p>
+                            <p>Standardizes input for neural network training.</p>
+                            <pre>normalized = resized.astype(np.float32) / 255.0</pre>
+                        </div>
+
+                        <div class="prep-step">
+                            <h4>Step 6: Channel Expansion</h4>
+                            <p><strong>Grayscale → 3-Channel RGB</strong></p>
+                            <p>MobileNetV2 expects RGB input, so expand single channel to three.</p>
+                            <pre>processed = cv2.cvtColor((normalized * 255).astype(np.uint8), 
+                               cv2.COLOR_GRAY2RGB)</pre>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disease Classes -->
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>🏷️ Disease Classes</h2>
+                    <p>The model can detect the following classes of tomato leaf conditions:</p>
+
+                    <div class="disease-grid">
+                        {% for disease in disease_classes %}
+                        <div class="disease-card {% if disease == 'Tomato___healthy' %}healthy{% endif %}">
+                            <h4>{{ disease.replace('Tomato___', '').replace('_', ' ') }}</h4>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>📈 Performance Metrics</h2>
+
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <h4>Training Accuracy</h4>
+                            <p class="metric-value">95%+</p>
+                            <p>Based on 80/20 train-validation split</p>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Validation Accuracy</h4>
+                            <p class="metric-value">≥93%</p>
+                            <p>Target threshold for model acceptance</p>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Inference Time</h4>
+                            <p class="metric-value">
+                                <100ms< /p>
+                                    <p>Per image on CPU</p>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Feature Vector Size</h4>
+                            <p class="metric-value">1280</p>
+                            <p>Dimensionality after GAP layer</p>
+                        </div>
+                    </div>
+
+                    <div class="evaluation-notes">
+                        <h4>Evaluation Notes</h4>
+                        <ul>
+                            <li><strong>Data Split:</strong> 80% training, 20% validation with stratified sampling</li>
+                            <li><strong>Class Balancing:</strong> Up to 500 samples per class used for training</li>
+                            <li><strong>Random State:</strong> 42 for reproducibility</li>
+                            <li><strong>Cross-Validation:</strong> Implicit through train-test split</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Importance -->
+            {% if method_selected == 'method1' %}
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>🔍 Feature Importance Analysis</h2>
+                    <p>The Random Forest classifier identifies which features are most important for disease
+                        classification. Key observations:</p>
+
+                    <div class="importance-list">
+                        <div class="importance-item">
+                            <span class="importance-rank">1</span>
+                            <div class="importance-content">
+                                <h4>Texture Features</h4>
+                                <p>Leaf surface texture patterns (spots, lesions, necrosis) are the primary
+                                    discriminative features</p>
+                            </div>
+                        </div>
+                        <div class="importance-item">
+                            <span class="importance-rank">2</span>
+                            <div class="importance-content">
+                                <h4>Color Distribution</h4>
+                                <p>Disease-induced color changes (yellowing, browning, chlorosis) provide strong signals
+                                </p>
+                            </div>
+                        </div>
+                        <div class="importance-item">
+                            <span class="importance-rank">3</span>
+                            <div class="importance-content">
+                                <h4>Edge Patterns</h4>
+                                <p>Lesion boundaries and spot margins help distinguish between disease types</p>
+                            </div>
+                        </div>
+                        <div class="importance-item">
+                            <span class="importance-rank">4</span>
+                            <div class="importance-content">
+                                <h4>Shape Descriptors</h4>
+                                <p>Overall leaf shape and deformation patterns from disease</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% elif method_selected == 'method2' %}
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>🔍 Combined Feature Importance (Method 2)</h2>
+                    <p>Importance scores reflect both handcrafted (GLCM/statistics) and deep features from MobileNetV2.</p>
+
+                    <div class="importance-list">
+                        <div class="importance-item">
+                            <span class="importance-rank">1</span>
+                            <div class="importance-content">
+                                <h4>Deep Features</h4>
+                                <p>MobileNetV2 global-pool activations capture high-level disease cues</p>
+                            </div>
+                        </div>
+                        <div class="importance-item">
+                            <span class="importance-rank">2</span>
+                            <div class="importance-content">
+                                <h4>Texture (GLCM) Features</h4>
+                                <p>Contrast, homogeneity and correlation still provide discriminative power</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>🔍 Feature Importance Analysis</h2>
+                    <p>The Random Forest classifier identifies which features are most important for disease
+                        classification. Key observations:</p>
+
+                    <div class="importance-list">
+                        <div class="importance-item">
+                            <span class="importance-rank">1</span>
+                            <div class="importance-content">
+                                <h4>Texture Features</h4>
+                                <p>Leaf surface texture patterns (spots, lesions, necrosis) are the primary
+                                    discriminative features</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Limitations & Future Work -->
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>⚠️ Limitations & Future Improvements</h2>
+
+                    <div class="limitations-grid">
+                        <div class="limitations-section">
+                            <h3>Current Limitations</h3>
+                            <ul>
+                                <li>Requires clear, well-lit images for best results</li>
+                                <li>May not detect early-stage diseases with subtle symptoms</li>
+                                <li>Performance varies with image quality and resolution</li>
+                                <li>Limited to 10 disease classes (may miss new variants)</li>
+                                <li>No severity assessment within each disease class</li>
+                            </ul>
+                        </div>
+                        <div class="future-section">
+                            <h3>Future Improvements</h3>
+                            <ul>
+                                <li>Implement multi-task learning for severity scoring</li>
+                                <li>Add attention mechanisms for interpretability</li>
+                                <li>Expand dataset with more disease variants</li>
+                                <li>Deploy edge-compression for mobile devices</li>
+                                <li>Integrate temporal analysis for disease progression</li>
+                                <li>Add explainability via Grad-CAM visualization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                    <span>📷 Analyze Leaf Image</span>
+                </a>
+                <button onclick="window.print()" class="btn btn-outline">
+                    <span>🖨️ Print Report</span>
+                </button>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Tomato Disease Detection System. Built with Flask, TensorFlow & Scikit-Learn.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Animate elements on scroll
+        document.addEventListener('DOMContentLoaded', function () {
+            const cards = document.querySelectorAll('.result-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Animate metric values
+            const metrics = document.querySelectorAll('.metric-value');
+            metrics.forEach(metric => {
+                const finalValue = metric.textContent;
+                if (finalValue.includes('%')) {
+                    let current = 0;
+                    const target = parseInt(finalValue);
+                    const increment = target / 30;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        metric.textContent = Math.round(current) + '%';
+                    }, 30);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

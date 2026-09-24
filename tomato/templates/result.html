@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Detection Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>🍅 Tomato Disease Detection</h2>
+            </div>
+            <div class="nav-user">
+                <span>Welcome, {{ current_user.username }}!</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <header>
+            <h1>🔬 Analysis Results</h1>
+            <p>Tomato leaf disease detection using texture-based analysis</p>
+        </header>
+
+        <main>
+            <!-- Main Result -->
+            <div class="results-section">
+                <div class="result-card main-result">
+                    <h2>Detection Result</h2>
+                    <div class="prediction-box">
+                        <div class="disease-name">Predicted Disease: {{ predicted_class }}</div>
+                        <div class="confidence">
+                            Confidence: {{ "%.1f"|format(confidence) }}%
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: {{ confidence }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Processing Stages -->
+            <div class="results-section">
+                <div class="result-card">
+                    <h2>🔍 Processing Stages</h2>
+                    <div class="processing-grid">
+                        <div class="stage">
+                            <h3>Original Image</h3>
+                            <img src="{{ original_image }}" alt="Original Image" class="stage-image">
+                        </div>
+                        <div class="stage">
+                            <h3>Grayscale Conversion</h3>
+                            <img src="{{ grayscale_image }}" alt="Grayscale Image" class="stage-image">
+                        </div>
+                        <div class="stage">
+                            <h3>CLAHE Enhancement</h3>
+                            <img src="{{ clahe_image }}" alt="CLAHE Enhanced Image" class="stage-image">
+                        </div>
+                        <div class="stage">
+                            <h3>Final Processed</h3>
+                            <img src="{{ processed_image }}" alt="Processed Image" class="stage-image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="recommendations-section">
+                {% if predicted_class != 'Tomato___healthy' %}
+                <div class="recommendation-alert warning">
+                    <h4>⚠️ Disease Detected: {{ predicted_class }}</h4>
+                    <p>Immediate action is recommended to prevent further spread of the disease.</p>
+                    <ul>
+                        <li>Isolate affected plants to prevent disease transmission</li>
+                        <li>Remove and destroy infected leaves and plant debris</li>
+                        <li>Apply appropriate fungicides or treatments based on the specific disease</li>
+                        <li>Improve air circulation and reduce humidity around plants</li>
+                        <li>Consult local agricultural extension services for specific treatment recommendations</li>
+                    </ul>
+                </div>
+                {% else %}
+                <div class="recommendation-alert success">
+                    <h4>✅ Healthy Plant Detected</h4>
+                    <p>Your tomato plant appears to be healthy! Continue with good agricultural practices.</p>
+                    <ul>
+                        <li>Maintain proper watering and fertilization schedule</li>
+                        <li>Monitor plants regularly for early signs of disease</li>
+                        <li>Practice crop rotation in future plantings</li>
+                        <li>Ensure good air circulation and appropriate spacing between plants</li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+                <!-- Feature Vector (method-specific) -->
+                {% if feature_vector and feature_names %}
+                <div class="results-section">
+                    <div class="result-card">
+                        <h2>🧾 Feature Vector</h2>
+                        <div class="feature-list">
+                            {% if selected_method == 'method1' or not selected_method %}
+                                {% set allowed = ['gray_mean','gray_std','clahe_mean','clahe_std','psnr_gray_clahe','mobilenet_v2_contrast','mobilenet_v2_correlation','mobilenet_v2_energy','mobilenet_v2_homogeneity'] %}
+                                {% for i in range(feature_names|length) %}
+                                    {% if feature_names[i] in allowed %}
+                                    <div class="feature-item">
+                                        <strong>{{ feature_names[i] }}:</strong>
+                                        {{ "%.4f"|format(feature_vector[i]) }}
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+
+                            {% elif selected_method == 'method2' %}
+                                <h4>MobileNetV2 Features</h4>
+                                {% for key in ['mobilenet_v2_contrast','mobilenet_v2_correlation','mobilenet_v2_energy','mobilenet_v2_homogeneity'] %}
+                                    {% for i in range(feature_names|length) %}
+                                        {% if feature_names[i] == key %}
+                                        <div class="feature-item">
+                                            <strong>{{ feature_names[i] }}:</strong>
+                                            {{ "%.4f"|format(feature_vector[i]) }}
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+
+                            {% else %}
+                                <!-- fallback: show the requested allowed stats -->
+                                {% set allowed = ['gray_mean','gray_std','clahe_mean','clahe_std','psnr_gray_clahe','mobilenet_v2_contrast','mobilenet_v2_correlation','mobilenet_v2_energy','mobilenet_v2_homogeneity'] %}
+                                {% for i in range(feature_names|length) %}
+                                    {% if feature_names[i] in allowed %}
+                                    <div class="feature-item">
+                                        <strong>{{ feature_names[i] }}:</strong>
+                                        {{ "%.4f"|format(feature_vector[i]) }}
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                    <span>📷 Analyze Another Image</span>
+                </a>
+                <a href="{{ url_for('analysis_report') }}" class="btn btn-info">
+                    <span>📊 Algorithm Report</span>
+                </a>
+                <button onclick="window.print()" class="btn btn-outline">
+                    <span>🖨️ Print Results</span>
+                </button>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Tomato Disease Detection System. Built with Flask and TensorFlow.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Animate confidence bar
+        document.addEventListener('DOMContentLoaded', function () {
+            const confidenceFill = document.querySelector('.confidence-fill');
+            confidenceFill.style.width = '0%';
+            setTimeout(() => {
+                confidenceFill.style.width = '{{ confidence }}%';
+            }, 500);
+
+            // Animate probability bars
+            const probabilityFills = document.querySelectorAll('.probability-fill');
+            probabilityFills.forEach((fill, index) => {
+                fill.style.width = '0%';
+                setTimeout(() => {
+                    const width = fill.parentElement.nextElementSibling.textContent.replace('%', '');
+                    fill.style.width = width + '%';
+                }, 500 + index * 100);
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomato Disease Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .feature-card h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>🍅 Tomato Disease Detection System</h1>
+            <p>Advanced AI-powered tomato leaf disease detection using deep learning and image processing</p>
+            <div class="cta-buttons">
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+                <a href="{{ url_for('register') }}" class="btn btn-secondary">Register</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🔬</div>
+                <h3>Advanced AI Detection</h3>
+                <p>Uses state-of-the-art MobileNetV2 deep learning model trained on thousands of tomato leaf images to
+                    accurately identify 10 different diseases.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Real-time Analysis</h3>
+                <p>Get instant results with confidence scores and detailed analysis of your tomato plant health.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🖼️</div>
+                <h3>Image Processing</h3>
+                <p>Advanced image preprocessing with grayscale conversion and CLAHE enhancement for optimal disease
+                    detection.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Easy to Use</h3>
+                <p>Simple web interface - just upload a photo of your tomato leaf and get instant disease detection
+                    results.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>High Accuracy</h3>
+                <p>Achieves 94%+ accuracy in detecting various tomato diseases including bacterial spot, early blight,
+                    and more.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌱</div>
+                <h3>Early Detection</h3>
+                <p>Catch diseases early when they're most treatable, helping you maintain healthy tomato plants and
+                    maximize yield.</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 3rem 0; padding: 2rem; background: #f8f9fa; border-radius: 10px;">
+            <h2>Supported Diseases</h2>
+            <p>Our system can detect the following tomato diseases:</p>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: 1rem;">
+                <span
+                    style="background: #e9ecef; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Bacterial
+                    Spot</span>
+                <span style="background: #e9ecef; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Early
+                    Blight</span>
+                <span style="background: #e9ecef; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Late
+                    Blight</span>
+                <span style="background: #e9ecef; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Leaf
+                    Mold</span>
+                <span
+                    style="background: #e9ecef; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Septoria
+                    Leaf Spot</span>
+                <span style="background: #e9ecef; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Spider
+                    Mites</span>
+                <span style="background: #e9ecef; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Target
+                    Spot</span>
+                <span style="background: #e9ecef; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Tomato
+                    Mosaic Virus</span>
+                <span style="background: #e9ecef; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Yellow
+                    Leaf Curl Virus</span>
+                <span
+                    style="background: #e9ecef; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Healthy</span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

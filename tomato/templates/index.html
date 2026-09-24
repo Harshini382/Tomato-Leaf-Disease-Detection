@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomato Leaf Disease Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>🍅 Tomato Disease Detection</h2>
+            </div>
+            <div class="nav-links" style="display: flex; gap: 15px; align-items: center;">
+                <a href="{{ url_for('image_metrics_page') }}" class="btn btn-info btn-sm"
+                    style="background-color: #17a2b8; color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px;">📊
+                    Image Metrics</a>
+                <a href="{{ url_for('feature_maps_page') }}" class="btn btn-info btn-sm"
+                    style="background-color: #ff6b6b; color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px;">🧠
+                    Feature Maps</a>
+                <a href="{{ url_for('analysis_report') }}" class="btn btn-info btn-sm"
+                    style="background-color: #6c757d; color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px;">📈
+                    Analysis Report</a>
+                <a href="{{ url_for('disease_types') }}" class="btn btn-info btn-sm"
+                    style="background-color: #dc3545; color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px;">🦠
+                    Disease Types</a>
+                <a href="{{ url_for('about') }}" class="btn btn-info btn-sm"
+                    style="background-color: #343a40; color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px;">ℹ️
+                    About</a>
+                <!-- New dropdown button -->
+                <div class="dropdown" style="position: relative;">
+                    <button id="moreBtn" class="btn btn-info btn-sm" type="button"
+                        style="background-color: #28a745; color: white; text-decoration: none; padding: 8px 15px; border-radius: 5px; border: none; cursor: pointer;">⚙️
+                        More ▾</button>
+                    <div id="moreMenu" style="display: none; position: absolute; right: 0; top: 40px; background: white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 6px; overflow: hidden; z-index: 1000; min-width: 160px;">
+                        <a href="#" data-method="method1" class="select-method" style="display:block; padding:8px 12px; color:#333; text-decoration:none;">method 1</a>
+                        <a href="#" data-method="method2" class="select-method" style="display:block; padding:8px 12px; color:#333; text-decoration:none;">method 2</a>
+                        <a href="#" data-method="method3" class="select-method" style="display:block; padding:8px 12px; color:#333; text-decoration:none;">method 3</a>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-user">
+                <span>Welcome, {{ current_user.username }}!</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <header>
+            <h1>🍅 Tomato Leaf Disease Detection System</h1>
+            <p>Upload a tomato leaf image to detect diseases using advanced texture-based analysis</p>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <div class="upload-card">
+                    <h2>Upload Image</h2>
+                    <form action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="method" id="methodInput" value="method1">
+                        <div class="file-upload">
+                            <input type="file" name="file" id="file" accept="image/*" required>
+                            <label for="file">
+                                <div class="upload-icon">📷</div>
+                                <div class="upload-text">
+                                    <span>Choose an image or drag it here</span>
+                                    <small>PNG, JPG, JPEG, GIF up to 16MB</small>
+                                </div>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <span>🔍 Analyze Disease</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-card">
+                    <h3>📊 How It Works</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Image Preprocessing</h4>
+                                <p>Convert to grayscale and enhance contrast using CLAHE</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Feature Extraction</h4>
+                                <p>Use MobileNetV2 to extract texture features</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Disease Classification</h4>
+                                <p>Random Forest classifier predicts disease type</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>🎯 Supported Diseases</h3>
+                    <ul class="disease-list">
+                        <li>Bacterial Spot</li>
+                        <li>Early Blight</li>
+                        <li>Late Blight</li>
+                        <li>Leaf Mold</li>
+                        <li>Septoria Leaf Spot</li>
+                        <li>Spider Mites</li>
+                        <li>Target Spot</li>
+                        <li>Tomato Mosaic Virus</li>
+                        <li>Tomato Yellow Leaf Curl Virus</li>
+                        <li><strong>Healthy</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Tomato Disease Detection System. Built with Flask and TensorFlow.</p>
+        </footer>
+    </div>
+
+    <script>
+        // File upload preview
+        const fileInput = document.getElementById('file');
+        const uploadLabel = fileInput.nextElementSibling;
+
+        fileInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                uploadLabel.querySelector('.upload-text span').textContent = file.name;
+            }
+        });
+
+        // Drag and drop functionality
+        const uploadCard = document.querySelector('.upload-card');
+        const fileUpload = document.querySelector('.file-upload');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadCard.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadCard.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadCard.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            uploadCard.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            uploadCard.classList.remove('dragover');
+        }
+
+        uploadCard.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileInput.dispatchEvent(new Event('change'));
+            }
+        }
+        // Dropdown toggle for the new 'More' button in the header
+        const moreBtn = document.getElementById('moreBtn');
+        const moreMenu = document.getElementById('moreMenu');
+
+        if (moreBtn) {
+            moreBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (moreMenu.style.display === 'block') {
+                    moreMenu.style.display = 'none';
+                } else {
+                    moreMenu.style.display = 'block';
+                }
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function () {
+                if (moreMenu) moreMenu.style.display = 'none';
+            });
+
+            // Handle selection of method and set hidden form input so server knows which pipeline to use
+            document.querySelectorAll('.select-method').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var method = this.getAttribute('data-method');
+                    var methodInput = document.getElementById('methodInput');
+                    if (methodInput) methodInput.value = method;
+                    // update dropdown button label to indicate selection
+                    moreBtn.textContent = '⚙️ ' + method + ' ▾';
+                    moreMenu.style.display = 'none';
+                    // inform server about selected method so analysis_report can adapt
+                    try {
+                        fetch("/select_method", {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ method: method })
+                        }).catch(()=>{});
+                    } catch(e) {}
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>
