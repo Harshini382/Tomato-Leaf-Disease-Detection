@@ -510,3 +510,8 @@ The repository contains a pre-trained model for application use.
 Make sure the required Python environment and dependencies are installed before launching the application.
 
 For model training, ensure that the dataset directory structure matches the expected structure used by the training scripts.
+
+---
+
+© 2026 Harshini Gengaraj. All Rights Reserved.
+
